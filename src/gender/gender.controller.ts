@@ -16,18 +16,15 @@ export class GenderController {
 
   @Get()
   findAll() {
-    return this.client.send({ cmd: 'find_all_genders' }, {});
+    return this.client.send({ cmd: 'find-all-genders' }, {});
 
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.client.send({ cmd: 'find_one_gender' }, { id });
+    return this.client.send({ cmd: 'find-one-gender' }, { id });
   }
 
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.client.send({ cmd: 'remove_gender' }, { id });
-  }
+
 }
