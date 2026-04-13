@@ -1,4 +1,5 @@
-import { Catch, ArgumentsHost, ExceptionFilter, HttpException } from '@nestjs/common';
+import { Catch, ArgumentsHost, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 
 @Catch()
 export class RpcCustomExceptionFilter implements ExceptionFilter {
@@ -7,11 +8,28 @@ export class RpcCustomExceptionFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
 
-        console.log('EXCEPTION:', exception);
+        if (exception instanceof RpcException) {
+            const rpcError = exception.getError() as { status?: number; message?: string } | string;
 
-        // Caso: error estructurado desde microservicio
+            const statusCode =
+                typeof rpcError === 'object' && rpcError?.status
+                    ? rpcError.status
+                    : HttpStatus.INTERNAL_SERVER_ERROR;
+
+            const message =
+                typeof rpcError === 'object' && rpcError?.message
+                    ? rpcError.message
+                    : rpcError;
+
+            return response.status(statusCode).json({
+                statusCode,
+                message,
+            });
+        }
+
         if (
             typeof exception === 'object' &&
+            !(exception instanceof HttpException) &&
             exception?.status &&
             exception?.message
         ) {
@@ -21,7 +39,6 @@ export class RpcCustomExceptionFilter implements ExceptionFilter {
             });
         }
 
-        // Caso: HttpException normal
         if (exception instanceof HttpException) {
             const status = exception.getStatus();
             const res = exception.getResponse();
@@ -29,7 +46,6 @@ export class RpcCustomExceptionFilter implements ExceptionFilter {
             return response.status(status).json(res);
         }
 
-        // Fallback
         return response.status(500).json({
             statusCode: 500,
             message: 'Internal server error',
