@@ -23,8 +23,8 @@ export class RegisterUserDto {
 
     @IsNotEmpty({ message: 'El ID del paciente es obligatorio.' })
     @IsString({ message: 'El ID del paciente debe ser un texto válido.' })
-    @IsUUID('4', {
-        message: 'El ID del paciente no tiene un formato UUID válido. Asegúrate de enviar un identificador correcto.',
-    })
-    patientId!: string;
+    // @IsUUID('4', {
+    //     message: 'El ID del paciente no tiene un formato UUID válido. Asegúrate de enviar un identificador correcto.',
+    // })
+    ci!: string;
 }

@@ -24,4 +24,11 @@ export class AuthController {
       catchError(err => { throw new RpcException(err) }),
     );
   }
+
+  @Post('verify-ci')
+  verifyCi(@Body('ci') ci: string) {
+    return this.client.send({ cmd: 'find-patient-by-ci' }, { ci }).pipe(
+      catchError(err => { throw new RpcException(err) }),
+    );
+  }
 }
