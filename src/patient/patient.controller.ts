@@ -39,7 +39,7 @@ export class PatientController {
     );
   }
 
-  @Roles('ADMIN', 'DOCTOR')
+  @Roles('ADMIN', 'DOCTOR', 'PATIENT')
   @Patch(':id')
   update(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,

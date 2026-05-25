@@ -1,10 +1,17 @@
 import {
+    IsEnum,
     IsNotEmpty,
     IsString,
-    IsUUID,
     Length,
     Matches,
+    ValidateIf,
 } from 'class-validator';
+
+export enum UserRole {
+    PATIENT = 'PATIENT',
+    DOCTOR = 'DOCTOR',
+    ADMIN = 'ADMIN',
+}
 
 export class RegisterUserDto {
     @IsString({ message: 'El nombre de usuario debe ser un texto válido.' })
@@ -21,10 +28,11 @@ export class RegisterUserDto {
     })
     password!: string;
 
-    @IsNotEmpty({ message: 'El ID del paciente es obligatorio.' })
-    @IsString({ message: 'El ID del paciente debe ser un texto válido.' })
-    // @IsUUID('4', {
-    //     message: 'El ID del paciente no tiene un formato UUID válido. Asegúrate de enviar un identificador correcto.',
-    // })
-    ci!: string;
+    @ValidateIf(o => o.role !== UserRole.ADMIN)
+    @IsNotEmpty({ message: 'El CI es obligatorio para pacientes y médicos.' })
+    @IsString({ message: 'El CI debe ser un texto válido.' })
+    ci?: string;
+
+    @IsEnum(UserRole, { message: 'El rol debe ser PATIENT, DOCTOR o ADMIN.' })
+    role!: UserRole;
 }

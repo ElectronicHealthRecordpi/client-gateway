@@ -56,13 +56,13 @@ export class CreatePatientDto {
     @IsPositive()
     bloodTypeId: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
     @Min(-90)
     @Max(90)
     latitude?: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
     @Min(-180)
     @Max(180)
